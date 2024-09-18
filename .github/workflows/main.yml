@@ -2,7 +2,7 @@ name: .NET Core CI
 
 on:
   push:
-    branches: [main]
+    branches: [DEV]
   pull_request:
     branches: [main]
 
@@ -17,7 +17,7 @@ jobs:
     - name: Set up .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '7.0' # or your project's .NET version
+        dotnet-version: '8.0' # or your project's .NET version
 
     - name: Restore dependencies
       run: dotnet restore
