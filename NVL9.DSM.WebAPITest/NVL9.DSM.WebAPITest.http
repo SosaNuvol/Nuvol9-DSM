@@ -1,0 +1,6 @@
+@NVL9.DSM.WebAPITest_HostAddress = http://localhost:5014
+
+GET {{NVL9.DSM.WebAPITest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
