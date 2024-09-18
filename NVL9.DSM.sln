@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NVL9.DSM.WebAPITest", "NVL9.DSM.WebAPITest\NVL9.DSM.WebAPITest.csproj", "{209A7C09-D3D8-4C81-80F9-762EF25D1AA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NVL9.DSM.Core", "NVL9.DSM.Core\NVL9.DSM.Core.csproj", "{6054414B-7236-4697-9818-E37576B13458}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{209A7C09-D3D8-4C81-80F9-762EF25D1AA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{209A7C09-D3D8-4C81-80F9-762EF25D1AA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{209A7C09-D3D8-4C81-80F9-762EF25D1AA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6054414B-7236-4697-9818-E37576B13458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6054414B-7236-4697-9818-E37576B13458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6054414B-7236-4697-9818-E37576B13458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6054414B-7236-4697-9818-E37576B13458}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
