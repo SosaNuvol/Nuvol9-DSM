@@ -1,10 +1,6 @@
 name: .NET Core CI
 
 on:
-  push:
-    branches: [DEV]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
     inputs:
       tag:
