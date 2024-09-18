@@ -24,13 +24,29 @@ jobs:
         dotnet-version: '8.0' # or your project's .NET version
 
     - name: Restore dependencies
-      run: dotnet restore NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj
+      run: |
+        dotnet restore NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj
+        dotnet restore NVL9.DSM.Core/NVL9.DSM.Core.csproj
 
     - name: Build
-      run: dotnet build NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --configuration Release --no-restore
+      run: |
+        dotnet build NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --configuration Release --no-restore
+        dotnet build NVL9.DSM.Core/NVL9.DSM.Core.csproj --configuration Release --no-restore
 
+    - name: Check and prepare output directory
+      run: |
+        if [ -d "./tag_${{ github.event.inputs.tag }}" ]; then
+          rm -rf ./tag_${{ github.event.inputs.tag }}/*
+        else
+          mkdir -p ./tag_${{ github.event.inputs.tag }}
+        fi
+  
     - name: Test
-      run: dotnet test NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --no-restore --verbosity normal
+      run: |
+        dotnet test NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --no-restore --verbosity normal
+        dotnet test NVL9.DSM.Core/NVL9.DSM.Core.csproj --no-restore --verbosity normal
 
     - name: Publish
-      run: dotnet publish NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --configuration Release --output ./output
+      run: |
+        dotnet publish NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --configuration Release --output ./tag_${{ github.event.inputs.tag }}/WebAPITest
+        dotnet publish NVL9.DSM.Core/NVL9.DSM.Core.csproj --configuration Release --output ./tag_${{ github.event.inputs.tag }}/Core
