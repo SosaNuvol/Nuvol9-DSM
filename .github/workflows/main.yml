@@ -12,6 +12,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      publishRootFolder: "tag_${{ github.event.inputs.tag }}"
+      EnvConfFile: "EnvironmentNameForConfig.txt"
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -35,10 +39,10 @@ jobs:
 
     - name: Check and prepare output directory
       run: |
-        if [ -d "./tag_${{ github.event.inputs.tag }}" ]; then
-          rm -rf ./tag_${{ github.event.inputs.tag }}/*
+        if [ -d "./${{ env.publishRootFolder }}" ]; then
+          rm -rf ./${{ env.publishRootFolder }}/*
         else
-          mkdir -p ./tag_${{ github.event.inputs.tag }}
+          mkdir -p ./${{ env.publishRootFolder }}
         fi
   
     - name: Test
@@ -48,5 +52,10 @@ jobs:
 
     - name: Publish
       run: |
-        dotnet publish NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --configuration Release --output ./tag_${{ github.event.inputs.tag }}/WebAPITest
-        dotnet publish NVL9.DSM.Core/NVL9.DSM.Core.csproj --configuration Release --output ./tag_${{ github.event.inputs.tag }}/Core
+        dotnet publish NVL9.DSM.WebAPITest/NVL9.DSM.WebAPITest.csproj --configuration Release --output ./${{ env.publishRootFolder }}/WebAPITest
+        dotnet publish NVL9.DSM.Core/NVL9.DSM.Core.csproj --configuration Release --output ./${{ env.publishRootFolder }}/Core
+
+    - name: Delete SHIP File
+      run: |
+        rm -rf ./${{ env.publishRootFolder }}/WebAPITest/${{ env.EnvConfFile }}
+        rm -rf ./${{ env.publishRootFolder }}/Core/${{ env.EnvConfFile }}
