@@ -5,6 +5,12 @@ on:
     branches: [DEV]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Enter Tag to use for the build'
+        required: true
+        default: 'latest'
 
 jobs:
   build:
@@ -13,6 +19,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.inputs.tag }}
 
     - name: Set up .NET
       uses: actions/setup-dotnet@v2
