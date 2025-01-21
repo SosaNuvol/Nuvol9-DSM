@@ -7,7 +7,6 @@ using PostSharp.Serialization;
 [PSerializable]
 public class DSMEnvelopeAttribute : OnMethodBoundaryAspect
 {
-
     public override void OnEntry(MethodExecutionArgs args)
     {
         var envelope = DSMEnvelope.Init(args.Arguments.ToArray());

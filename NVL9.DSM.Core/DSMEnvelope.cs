@@ -84,8 +84,6 @@ public partial class DSMEnvelope
             if (nameof(item).Equals("showArguments")) showArguments = (bool)item;
 
             if (nameof(item).Equals("obfuscatedListOfArguments")) obfuscatedListOfArguments = item as IList<string> ?? new List<string>();
-
-            //Console.WriteLine($"{JsonConvert.SerializeObject(item, Formatting.Indented)}");
         }
     }
 

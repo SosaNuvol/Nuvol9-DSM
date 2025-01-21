@@ -2,6 +2,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 public class CodeBlock
 {
@@ -13,18 +14,16 @@ public class CodeBlock
 
     public bool IsValidArgList { get; private set; }
 
-    public CodeBlock(StackFrame stackFrame, object[] providedArguments)
+    public CodeBlock(StackFrame stackFrame, object[] providedArguments, ICallerMethodName callerMethodName)
     {
         if (stackFrame == null) return;
 
         var methodObject = stackFrame.GetMethod();
         if (methodObject == null) return;
 
-        Method = methodObject.Name ?? string.Empty;
+        Method = callerMethodName.Method ?? string.Empty;
 
-        ClassName = methodObject.ReflectedType != null
-            ? methodObject.ReflectedType?.Name
-            : null;
+        ClassName = callerMethodName.ClassName ?? string.Empty;
 
         IsValidArgList = _processArgumentsTry(stackFrame, providedArguments);
 

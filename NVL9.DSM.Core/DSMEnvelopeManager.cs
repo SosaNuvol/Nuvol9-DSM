@@ -1,4 +1,6 @@
-﻿namespace NVL9.DSM.Core;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace NVL9.DSM.Core;
 
 public partial class DSMEnvelopeManager
 {
@@ -74,4 +76,48 @@ public partial class DSMEnvelopeManager
             _envelopes.Push(temp.Pop());
         }
     }
+
+    public DSMEnvelope InitEnvelope(params object[] providedParams)
+    {
+        var envelope = DSMEnvelope.Init(providedParams);
+        PushEnvelope(envelope);
+
+        _captureHeaderValues(providedParams);
+
+        envelope.PrintEnvelop();
+
+        return envelope;
+    }
+
+    private void _captureHeaderValues(params object[] providedParams)
+    {
+        // Find the parameter named "httpHeaders"
+        var headers = providedParams.FirstOrDefault(param => param is IHeaderDictionary) as IHeaderDictionary;
+
+        if (headers == null)
+        {
+            return;
+        }
+
+        // Extract the API-Trace-Id and Idempotency-Key-Id headers
+        string? apiTraceId = headers?["API-Trace-Id"];
+        string? idempotencyKeyId = headers?["Idempotency-Key-Id"];
+        var envelope = DSMEnvelopeManager.Instance.PeekEnvelope();
+
+        if (envelope == null)
+        {
+            return;
+        }
+
+        // Assign to the current envelope
+        if (apiTraceId != null)
+        {
+            envelope.SetApiTraceId(apiTraceId);
+        }
+        if (idempotencyKeyId != null)
+        {
+            envelope.SetIdempotencyKeyId(idempotencyKeyId);
+        }
+    }
+
 }

@@ -15,11 +15,14 @@ public partial class DSMEnvelope
     {
         _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
 
+        var callerMethod = providedParams
+           .FirstOrDefault(param => param is ICallerMethodName) as ICallerMethodName ?? new CallerMethodName("NotSet", "NotSet");
+
         var result = new DSMEnvelope(showArguments, obfuscatedListOfArguments);
         var stackTrace = new StackTrace();
         var frames = stackTrace.GetFrames();
 
-        result.CodeBlockInfo = new CodeBlock(frames[_ONE_DEEP_INTO_STACK], providedParams);
+        result.CodeBlockInfo = new CodeBlock(frames[_ONE_DEEP_INTO_STACK], providedParams, callerMethod);
 
         return result;
     }

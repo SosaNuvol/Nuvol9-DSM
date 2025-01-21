@@ -16,7 +16,7 @@ public class ApplicationInformation : IApplicationInformation
     {
         get
         {
-            return _configuration.GetSection("PBCSettings:CP:APPLICATION_ID").Value ?? "NOTSET";
+            return _configuration.GetSection("DSMSettings:CP:APPLICATION_ID").Value ?? "NOTSET";
         }
     }
 
@@ -24,7 +24,7 @@ public class ApplicationInformation : IApplicationInformation
     {
         get
         {
-            return _configuration.GetSection("PBCSettings:CP:HOST_NAME").Value ?? "NOTSET";
+            return _configuration.GetSection("DSMSettings:CP:HOST_NAME").Value ?? "NOTSET";
         }
     }
 
@@ -32,7 +32,7 @@ public class ApplicationInformation : IApplicationInformation
     {
         get
         {
-            return _configuration.GetSection("PBCSettings:CP:CONN_STR").Value ?? "NOTSET";
+            return _configuration.GetSection("DSMSettings:CP:CONN_STR").Value ?? "NOTSET";
         }
     }
 
