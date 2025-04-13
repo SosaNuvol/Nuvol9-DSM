@@ -7,9 +7,18 @@ using PostSharp.Serialization;
 [PSerializable]
 public class DSMEnvelopeAttribute : OnMethodBoundaryAspect
 {
+    private Type _envelopeType;
+    
+    public DSMEnvelopeAttribute(Type envelopeType)
+    {
+        _envelopeType = envelopeType;
+    }
+
     public override void OnEntry(MethodExecutionArgs args)
     {
-        var envelope = DSMEnvelope.Init(args.Arguments.ToArray());
+        //var envelope = DSMEnvelope.Init(args.Arguments.ToArray());
+        //args.MethodExecutionTag = envelope;
+        var envelope = (IDSMEnvelope)Activator.CreateInstance(_envelopeType, args.Arguments.ToArray());
         args.MethodExecutionTag = envelope;
         DSMEnvelopeManager.Instance.PushEnvelope(envelope);
 
@@ -20,13 +29,13 @@ public class DSMEnvelopeAttribute : OnMethodBoundaryAspect
 
     public override void OnSuccess(MethodExecutionArgs args)
     {
-        var envelope = (DSMEnvelope)args.MethodExecutionTag;
+        var envelope = (IDSMEnvelope)args.MethodExecutionTag;
         envelope.Success();
     }
 
     public override void OnException(MethodExecutionArgs args)
     {
-        var envelope = (DSMEnvelope)args.MethodExecutionTag;
+        var envelope = (IDSMEnvelope)args.MethodExecutionTag;
 
         args.FlowBehavior = FlowBehavior.Return;
 
@@ -46,7 +55,7 @@ public class DSMEnvelopeAttribute : OnMethodBoundaryAspect
 
     public override void OnExit(MethodExecutionArgs args)
     {
-        var envelope = (DSMEnvelope)args.MethodExecutionTag;
+        var envelope = (IDSMEnvelope)args.MethodExecutionTag;
 
         if (!envelope.IsSuccessful())
         {

@@ -6,7 +6,7 @@ public partial class DSMEnvelopeManager
 {
     private static DSMEnvelopeManager _instance = null!;
 
-    private readonly Stack<DSMEnvelope> _envelopes = null!;
+    private readonly Stack<IDSMEnvelope> _envelopes = null!;
 
     public static DSMEnvelopeManager Instance
     {
@@ -23,36 +23,39 @@ public partial class DSMEnvelopeManager
 
     private DSMEnvelopeManager()
     {
-        _envelopes = new Stack<DSMEnvelope>();
+        _envelopes = new Stack<IDSMEnvelope>();
     }
 
-    public void PushEnvelope(DSMEnvelope envelop)
+    public void PushEnvelope(IDSMEnvelope envelop)
     {
         _tieToParent(envelop);
         _envelopes.Push(envelop);
     }
 
-    public DSMEnvelope? PopEnvelope()
+    public IDSMEnvelope? PopEnvelope()
     {
         return _envelopes.Count == 0 ? null : _envelopes.Pop();
     }
 
-    public DSMEnvelope? PeekEnvelope()
+    public IDSMEnvelope? PeekEnvelope()
     {
         return _envelopes.Count == 0 ? null : _envelopes.Peek();
     }
 
-    private void _tieToParent(DSMEnvelope envelope)
+    private void _tieToParent(IDSMEnvelope envelope)
     {
         var parent = PeekEnvelope();
         if (parent == null) return;
 
         envelope.SetParentID(parent.RootEnvelopID);
+        envelope.SetApiTraceId(parent.ApiTraceId);
+        envelope.SetIdempotencyKeyId(parent.IdempotencyKeyId);
+        //envelope.SetApiTraceId(parent.IdempotencyKeyId);
     }
 
-    public void FreezeStackWith(DSMEnvelope senderEnvelope)
+    public void FreezeStackWith(IDSMEnvelope senderEnvelope)
     {
-        var temp = new Stack<DSMEnvelope>();
+        var temp = new Stack<IDSMEnvelope>();
         while (_envelopes.Count > 0)
         {
             var envelope = _envelopes.Pop();
@@ -77,10 +80,10 @@ public partial class DSMEnvelopeManager
         }
     }
 
-    public DSMEnvelope InitEnvelope(params object[] providedParams)
+    public DSMEnvelope<T> InitEnvelope<T>(params object[] providedParams) where T : class, new()
     {
-        var envelope = DSMEnvelope.Init(providedParams);
-        PushEnvelope(envelope);
+        var envelope = DSMEnvelope<T>.Init(providedParams);
+        PushEnvelope((IDSMEnvelope)envelope);
 
         _captureHeaderValues(providedParams);
 

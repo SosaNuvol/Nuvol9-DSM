@@ -7,18 +7,18 @@ using NVL9.DSM.Core.Models;
 using System.Diagnostics;
 using System.Text;
 
-public partial class DSMEnvelope
+public partial class DSMEnvelope<T>
 {
     private const int _LINE_LENGTH_OUTPUT = 82;
 
-    public static DSMEnvelope Init(params object[] providedParams)
+    public static DSMEnvelope<T> Init(params object[] providedParams)
     {
         _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
 
         var callerMethod = providedParams
            .FirstOrDefault(param => param is ICallerMethodName) as ICallerMethodName ?? new CallerMethodName("NotSet", "NotSet");
 
-        var result = new DSMEnvelope(showArguments, obfuscatedListOfArguments);
+        var result = new DSMEnvelope<T>(showArguments, obfuscatedListOfArguments);
         var stackTrace = new StackTrace();
         var frames = stackTrace.GetFrames();
 
@@ -38,7 +38,7 @@ public partial class DSMEnvelope
         return Code == DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00001);
     }
 
-    public DSMEnvelope Success(bool outputEnvelop = false)
+    public DSMEnvelope<T> Success(bool outputEnvelop = false)
     {
         _calculateExecutionTime();
 
@@ -58,7 +58,7 @@ public partial class DSMEnvelope
         PrintEnvelop();
     }
 
-    public DSMEnvelope ReBase(IDSMEnvelope envelop, bool calculateExecutionTime = true)
+    public DSMEnvelope<T> ReBase(IDSMEnvelope envelop, bool calculateExecutionTime = true)
     {
         if (calculateExecutionTime) _calculateExecutionTime();
 
@@ -115,7 +115,7 @@ public partial class DSMEnvelope
         FreezeStatus = status;
     }
 
-    public void SetFreezeStatus(DSMEnvelope senderEnvelope)
+    public void SetFreezeStatus(DSMEnvelope<T> senderEnvelope)
     {
         FreezeStatus = senderEnvelope.FreezeStatus;
         ErrorIEID = senderEnvelope.ErrorIEID;

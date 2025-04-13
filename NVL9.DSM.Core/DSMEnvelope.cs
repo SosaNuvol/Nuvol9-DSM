@@ -4,7 +4,7 @@ using NVL9.DSM.Core.Codes;
 using NVL9.DSM.Core.Models;
 using System.Diagnostics;
 
-public partial class DSMEnvelope
+public partial class DSMEnvelope<T> where T : class
 {
     private const short _MAX_RANDOM_NUMBER = short.MaxValue;
     private const short _MIN_RANDOM_NUMBER = 999;
@@ -31,6 +31,8 @@ public partial class DSMEnvelope
     public string? IdempotencyKeyId { get; private set; } = null!;
 
     public string DTOMessage { get; private set; } = null!;
+
+    public string Notes { get; private set; } = null!;
 
     public DSMEnvelopeCode Code { get; private set; } = null!;
 
@@ -59,6 +61,8 @@ public partial class DSMEnvelope
     private bool _showArguments = false;
 
     private IList<string> _obfuscatedListOfArguments = null!;
+
+    public T Value { get; private set; } = null!;
 
     private DSMEnvelope()
     {

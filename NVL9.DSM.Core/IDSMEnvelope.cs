@@ -1,5 +1,6 @@
 ﻿namespace NVL9.DSM.Core;
 
+using Microsoft.Data.SqlClient;
 using NVL9.DSM.Core.Codes;
 
 public interface IDSMEnvelope
@@ -35,8 +36,25 @@ public interface IDSMEnvelope
 
     bool IsSuccessful();
 
+    void Success();
+
     void SetParentID(string parentId);
+
+    void SetApiTraceId(string? apiTraceId);
+
+    void SetIdempotencyKeyId(string? idempotencyKeyId);
+
+    void SetFreezeStatus(bool status);
+
+    void SetFreezeStatus(IDSMEnvelope envelope);
 
     void PrintEnvelop();
 
+    void CaptureException(Exception ex);
+
+    void CaptureException(SqlException ex);
+
+    void SetState(DSMEnvelopeCode code, string message);
+
+    void FinishLifeCycle();
 }
