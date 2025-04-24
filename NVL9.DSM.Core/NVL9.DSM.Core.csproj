@@ -4,6 +4,17 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>NVL9.DSM.Core</PackageId>
+	<Version>1.0.1</Version>
+	<Authors>Andres Sosa</Authors>
+	<Company>Nuvol 9 Corp</Company>
+	<Description>Implements one deifinition of DSMs</Description>
+	<PackageTags>DSM; PureFunctions</PackageTags>
+	<RepositoryUrl>https://github.com/SosaNuvol/Nuvol9-DSM</RepositoryUrl>
+	<Copyright>© 2025 Nuvol 9 Corp</Copyright>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
