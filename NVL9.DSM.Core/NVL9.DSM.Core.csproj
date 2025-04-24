@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>NVL9.DSM.Core</PackageId>
+	<Version>1.0.1</Version>
+	<Authors>Andres Sosa</Authors>
+	<Company>Nuvol 9 Corp</Company>
+	<Description>Implements one deifinition of DSMs</Description>
+	<PackageTags>DSM; PureFunctions</PackageTags>
+	<RepositoryUrl>https://github.com/SosaNuvol/Nuvol9-DSM</RepositoryUrl>
+	<Copyright>© 2025 Nuvol 9 Corp</Copyright>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PostSharp" Version="2025.0.6" />
+  </ItemGroup>
+
+</Project>
