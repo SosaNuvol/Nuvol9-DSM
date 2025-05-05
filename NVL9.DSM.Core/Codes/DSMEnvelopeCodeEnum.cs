@@ -14,6 +14,8 @@
         API_APPVLD_02001 = 02001,
 
         // Database
-        API_DATABASE_03020 = 03020
+        API_DATABASE_03020 = 03020,
+        API_DATABASE_03021 = 03021,
+        API_DATABASE_03022 = 03022,
     }
 }

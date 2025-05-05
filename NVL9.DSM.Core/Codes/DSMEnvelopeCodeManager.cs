@@ -30,6 +30,8 @@ public class DSMEnvelopeCodeManager
 
         // Database
         _dict.Add(DSMEnvelopeCodeEnum.API_DATABASE_03020, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_DATABASE_03020, "API-DATABASE-03020", "500", "Execution Error.", null!));
+        _dict.Add(DSMEnvelopeCodeEnum.API_DATABASE_03021, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_DATABASE_03021, "API-DATABASE-03021", "401", "SESSION CONTEXT User Not Found.", null!));
+        _dict.Add(DSMEnvelopeCodeEnum.API_DATABASE_03022, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_DATABASE_03022, "API-DATABASE-03022", "403", "User does not have access to these resources.", null!));
     }
 
     public DSMEnvelopeCode Find(DSMEnvelopeCodeEnum codeEnum)
