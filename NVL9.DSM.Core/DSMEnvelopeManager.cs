@@ -80,7 +80,7 @@ public partial class DSMEnvelopeManager
         }
     }
 
-    public DSMEnvelope<T> InitEnvelope<T>(params object[] providedParams) where T : class, new()
+    public DSMEnvelope<T> InitEnvelope<T>(params object[] providedParams)
     {
         var envelope = DSMEnvelope<T>.Init(providedParams);
         PushEnvelope((IDSMEnvelope)envelope);
