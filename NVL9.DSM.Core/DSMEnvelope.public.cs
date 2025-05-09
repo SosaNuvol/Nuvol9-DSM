@@ -38,6 +38,19 @@ public partial class DSMEnvelope<T>
         return Code == DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00001);
     }
 
+    public DSMEnvelope<T> Success(T result, bool outputEnvelop = false)
+    {
+        _calculateExecutionTime();
+        Value = result;
+        if (!FreezeStatus && IsInInitializedState())
+        {
+            Code = DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00000);
+            DTOMessage = Code.ErrorMessage;
+        }
+        if (outputEnvelop) PrintEnvelop();
+        return this;
+    }
+
     public DSMEnvelope<T> Success(bool outputEnvelop = false)
     {
         _calculateExecutionTime();
