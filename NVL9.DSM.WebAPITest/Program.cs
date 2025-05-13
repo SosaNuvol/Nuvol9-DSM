@@ -1,46 +1,59 @@
 using NVL9.DSM.Core;
 
-var builder = WebApplication.CreateBuilder(args);
+public class Program {
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    public static async Task Main(string[] args)
+    {
+        var envelope = DSMEnvelopeManager.Instance.InitEnvelopeAsync<WeatherForecast>(args, DSMEnvelopeManager.GetCallerClassName(), DSMEnvelopeManager.GetCallerMethodName());
 
-var app = builder.Build();
+        var builder = WebApplication.CreateBuilder(args);
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        // Add services to the container.
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        var summaries = new[]
+        {
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
+
+        app.MapGet($"/{CoreConstants.RootEndPoint}", () =>
+        {
+            var forecast =  Enumerable.Range(1, 5).Select(index =>
+                new WeatherForecast
+                (
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                    Random.Shared.Next(-20, 55),
+                    summaries[Random.Shared.Next(summaries.Length)]
+                ))
+                .ToArray();
+            return forecast;
+        })
+        .WithName(CoreConstants.GetRootEndPoint)
+        .WithOpenApi();
+
+        var forcast = new WeatherForecast();
+        envelope.Success(forcast);
+        envelope.FinishLifeCycle();
+
+        app.Run();
+    }
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+public class WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet($"/{CoreConstants.RootEndPoint}", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName(CoreConstants.GetRootEndPoint)
-.WithOpenApi();
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
+    public WeatherForecast() : this(DateOnly.MinValue, 0, null) { }
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

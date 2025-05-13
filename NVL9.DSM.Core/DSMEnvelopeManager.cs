@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using NVL9.DSM.Core.Models;
 
 namespace NVL9.DSM.Core;
 
@@ -80,9 +81,26 @@ public partial class DSMEnvelopeManager
         }
     }
 
-    public DSMEnvelope<T> InitEnvelope<T>(params object[] providedParams) where T : class, new()
+    public DSMEnvelope<T> InitEnvelope<T>(object[] providedParams) where T : class, new()
     {
         var envelope = DSMEnvelope<T>.Init(providedParams);
+
+        PushEnvelope((IDSMEnvelope)envelope);
+
+        _captureHeaderValues(providedParams);
+
+        envelope.PrintEnvelop();
+
+        return envelope;
+    }
+    public DSMEnvelope<T> InitEnvelopeAsync<T>(object[] providedParams, string className, string methodName) where T : class, new()
+    {
+        var callerMethodName = new CallerMethodName(methodName, className);
+        var updatedParams = providedParams
+            .Concat(new object[] { callerMethodName })
+            .ToArray();
+        var envelope = DSMEnvelope<T>.Init(updatedParams);
+
         PushEnvelope((IDSMEnvelope)envelope);
 
         _captureHeaderValues(providedParams);
@@ -123,4 +141,15 @@ public partial class DSMEnvelopeManager
         }
     }
 
+    public static string GetCallerClassName()
+    {
+        var stackFrame = new System.Diagnostics.StackFrame(1, false);
+        var method = stackFrame.GetMethod();
+        return method?.DeclaringType?.FullName ?? "UnknownClass";
+    }
+
+    public static string GetCallerMethodName([System.Runtime.CompilerServices.CallerMemberName] string callerName = "")
+    {
+        return callerName;
+    }
 }

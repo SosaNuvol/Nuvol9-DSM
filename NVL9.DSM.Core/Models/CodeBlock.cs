@@ -16,18 +16,37 @@ public class CodeBlock
 
     public CodeBlock(StackFrame stackFrame, object[] providedArguments, ICallerMethodName callerMethodName)
     {
+        if (callerMethodName != null)
+        {
+            _saveCallerMethodName(callerMethodName);
+        } else
+        {
+            _saveCallerMethodName(stackFrame);
+        }
         if (stackFrame == null) return;
 
         var methodObject = stackFrame.GetMethod();
         if (methodObject == null) return;
 
-        Method = callerMethodName.Method ?? string.Empty;
-
-        ClassName = callerMethodName.ClassName ?? string.Empty;
-
         IsValidArgList = _processArgumentsTry(stackFrame, providedArguments);
 
         _initArguments(methodObject.GetParameters(), providedArguments);
+    }
+
+    private void _saveCallerMethodName(ICallerMethodName callerMethodName)
+    {
+        if (callerMethodName == null) return;
+        Method = callerMethodName.Method;
+        ClassName = callerMethodName.ClassName;
+    }
+
+    private void _saveCallerMethodName(StackFrame stackFrame)
+    {
+        if (stackFrame == null) return;
+        var methodObject = stackFrame.GetMethod();
+        if (methodObject == null) return;
+        Method = methodObject.Name;
+        ClassName = methodObject.DeclaringType?.FullName ?? string.Empty;
     }
 
     private bool _processArgumentsTry(StackFrame stackFrame, object[] providedArguments)

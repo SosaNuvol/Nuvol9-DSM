@@ -38,18 +38,29 @@ public partial class DSMEnvelope<T>
         return Code == DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00001);
     }
 
-    public DSMEnvelope<T> Success(bool outputEnvelop = false)
+    public DSMEnvelope<T> Success(T payload, bool outputEnvelop = false)
     {
         _calculateExecutionTime();
 
+        Value = payload ?? throw new ArgumentNullException(nameof(payload));
+
+        return Success(outputEnvelop);
+    }
+
+    public void Success()
+    {
+        Success(false);
+    }
+
+    public DSMEnvelope<T> Success(bool outputEnvelop = false)
+    {
+        _calculateExecutionTime();
         if (!FreezeStatus && IsInInitializedState())
         {
             Code = DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00000);
             DTOMessage = Code.ErrorMessage;
         }
-
         if (outputEnvelop) PrintEnvelop();
-
         return this;
     }
 
@@ -115,20 +126,20 @@ public partial class DSMEnvelope<T>
         FreezeStatus = status;
     }
 
-    public void SetFreezeStatus(DSMEnvelope<T> senderEnvelope)
+    public void SetFreezeStatus(IDSMEnvelope envelope)
     {
-        FreezeStatus = senderEnvelope.FreezeStatus;
-        ErrorIEID = senderEnvelope.ErrorIEID;
-        Code = senderEnvelope.Code;
-        DTOMessage = senderEnvelope.DTOMessage;
+        FreezeStatus = envelope.FreezeStatus;
+        ErrorIEID = envelope.ErrorIEID;
+        Code = envelope.Code;
+        DTOMessage = envelope.DTOMessage;
     }
 
-    internal void SetApiTraceId(string? apiTraceId)
+    public void SetApiTraceId(string? apiTraceId)
     {
         ApiTraceId = apiTraceId;
     }
 
-    internal void SetIdempotencyKeyId(string? idempotencyKeyId)
+    public void SetIdempotencyKeyId(string? idempotencyKeyId)
     {
         IdempotencyKeyId = idempotencyKeyId;
     }

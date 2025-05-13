@@ -15,4 +15,8 @@
     <ProjectReference Include="..\NVL9.DSM.Core\NVL9.DSM.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
