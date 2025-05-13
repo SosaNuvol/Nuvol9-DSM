@@ -24,7 +24,7 @@ public class CallerMethodName : ICallerMethodName
             : null;
     }
 
-    public CallerMethodName(string methodName, string className)
+    public CallerMethodName(string className, string methodName)
     {
         Method = methodName;
         ClassName = className;

@@ -8,6 +8,14 @@ public class DSMEnvelopeCodeManager
 
     public static DSMEnvelopeCodeManager Manager = new DSMEnvelopeCodeManager();
 
+    public static DSMEnvelopeCode Success
+    {
+        get
+        {
+            return Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00000);
+        }
+    }
+
     public DSMEnvelopeCodeManager()
     {
         _init();

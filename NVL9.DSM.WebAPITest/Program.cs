@@ -1,15 +1,18 @@
 using NVL9.DSM.Core;
+using NVL9.DSM.Core.Models;
 
 public class Program {
 
     public static async Task Main(string[] args)
     {
-        var envelope = DSMEnvelopeManager.Instance.InitEnvelopeAsync<WeatherForecast>(args, DSMEnvelopeManager.GetCallerClassName(), DSMEnvelopeManager.GetCallerMethodName());
+        var callerMethodName = new CallerMethodName(DSMEnvelopeManager.GetCallerClassName(), DSMEnvelopeManager.GetCallerMethodName());
+        var envelope = DSMEnvelopeManager.Instance.InitEnvelopeAsync<WeatherForecast>(args, callerMethodName);
 
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -24,25 +27,7 @@ public class Program {
 
         app.UseHttpsRedirection();
 
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        app.MapGet($"/{CoreConstants.RootEndPoint}", () =>
-        {
-            var forecast =  Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-                .ToArray();
-            return forecast;
-        })
-        .WithName(CoreConstants.GetRootEndPoint)
-        .WithOpenApi();
+        app.MapControllers();
 
         var forcast = new WeatherForecast();
         envelope.Success(forcast);

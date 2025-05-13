@@ -93,13 +93,9 @@ public partial class DSMEnvelopeManager
 
         return envelope;
     }
-    public DSMEnvelope<T> InitEnvelopeAsync<T>(object[] providedParams, string className, string methodName) where T : class, new()
+    public DSMEnvelope<T> InitEnvelopeAsync<T>(params object[] providedParams) where T : class, new()
     {
-        var callerMethodName = new CallerMethodName(methodName, className);
-        var updatedParams = providedParams
-            .Concat(new object[] { callerMethodName })
-            .ToArray();
-        var envelope = DSMEnvelope<T>.Init(updatedParams);
+        var envelope = DSMEnvelope<T>.Init(providedParams);
 
         PushEnvelope((IDSMEnvelope)envelope);
 
@@ -145,11 +141,21 @@ public partial class DSMEnvelopeManager
     {
         var stackFrame = new System.Diagnostics.StackFrame(1, false);
         var method = stackFrame.GetMethod();
-        return method?.DeclaringType?.FullName ?? "UnknownClass";
+        return CleanClassName(method?.DeclaringType?.FullName ?? "UnknownClass");
     }
 
     public static string GetCallerMethodName([System.Runtime.CompilerServices.CallerMemberName] string callerName = "")
     {
         return callerName;
+    }
+
+    public static string CleanClassName(string rawClass)
+    {
+        if (rawClass.IndexOf("+") > 0)
+        {
+            rawClass = rawClass.Substring(0, rawClass.IndexOf("+"));
+        }
+
+        return rawClass;
     }
 }
