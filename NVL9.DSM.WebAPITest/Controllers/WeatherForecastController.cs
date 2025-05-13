@@ -10,11 +10,6 @@ using NVL9.DSM.WebAPITest.Business;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    //private static readonly string[] Summaries = new[]
-    //{
-    //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    //};
-
     private WeatherForecastFacade _weatherForecastFacade;
 
     public WeatherForecastController()
@@ -49,14 +44,5 @@ public class WeatherForecastController : ControllerBase
         }
 
         return envelope;
-
-        //return Enumerable.Range(1, 5).Select(index =>
-        //    new WeatherForecast
-        //    (
-        //        DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-        //        Random.Shared.Next(-20, 55),
-        //        Summaries[Random.Shared.Next(Summaries.Length)]
-        //    ))
-        //    .ToArray();
     }
 }
