@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using NVL9.DSM.Core.Models;
+﻿namespace NVL9.DSM.Core;
 
-namespace NVL9.DSM.Core;
+using Microsoft.AspNetCore.Http;
 
 public partial class DSMEnvelopeManager
 {
