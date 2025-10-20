@@ -121,10 +121,9 @@ public partial class DSMEnvelope<T>
     /// <returns>This envelope instance for method chaining</returns>
     public DSMEnvelope<T> CaptureAndSetHeaders(HttpContext httpContext, bool printEnvelop = true)
     {
-        CaptureAndSetHeaders(this, httpContext);
+        CaptureAndSetHeaders(this, httpContext, printEnvelop);
         return this;
     }
-
 
     public bool IsSuccessful()
     {

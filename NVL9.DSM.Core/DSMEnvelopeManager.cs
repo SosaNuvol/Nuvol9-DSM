@@ -92,6 +92,64 @@ public partial class DSMEnvelopeManager
         return envelope;
     }
 
+    /// <summary>
+    /// Initializes an envelope using the async-friendly InitWithCaller method and manages it in the envelope stack.
+    /// </summary>
+    /// <typeparam name="T">The type of data the envelope will contain</typeparam>
+    /// <param name="className">The name of the calling class</param>
+    /// <param name="httpContext">The HTTP context to extract headers from</param>
+    /// <param name="providedParams">Additional parameters for the envelope</param>
+    /// <param name="printEnvelop">Whether to print the envelope on initialization</param>
+    /// <returns>A new DSMEnvelope instance managed by the stack</returns>
+    public DSMEnvelope<T> InitEnvelopeWithCaller<T>(
+        string className, 
+        HttpContext? httpContext = null,
+        object[]? providedParams = null, 
+        bool printEnvelop = true)
+    {
+        var envelope = DSMEnvelope<T>.InitWithCaller(className, providedParams, printEnvelop: false);
+        
+        // Capture headers if HttpContext is provided
+        if (httpContext != null)
+        {
+            envelope.CaptureAndSetHeaders(httpContext);
+        }
+
+        PushEnvelope((IDSMEnvelope)envelope);
+
+        if(printEnvelop) envelope.PrintEnvelop();
+
+        return envelope;
+    }
+
+    /// <summary>
+    /// Initializes an envelope using the async-friendly InitWithCaller method (with file path inference) and manages it in the envelope stack.
+    /// </summary>
+    /// <typeparam name="T">The type of data the envelope will contain</typeparam>
+    /// <param name="httpContext">The HTTP context to extract headers from</param>
+    /// <param name="providedParams">Additional parameters for the envelope</param>
+    /// <param name="printEnvelop">Whether to print the envelope on initialization</param>
+    /// <returns>A new DSMEnvelope instance managed by the stack</returns>
+    public DSMEnvelope<T> InitEnvelopeWithCaller<T>(
+        HttpContext? httpContext = null,
+        object[]? providedParams = null, 
+        bool printEnvelop = true)
+    {
+        var envelope = DSMEnvelope<T>.InitWithCaller(providedParams, printEnvelop: false);
+        
+        // Capture headers if HttpContext is provided
+        if (httpContext != null)
+        {
+            envelope.CaptureAndSetHeaders(httpContext);
+        }
+
+        PushEnvelope((IDSMEnvelope)envelope);
+
+        if (printEnvelop) envelope.PrintEnvelop();
+
+        return envelope;
+    }
+
     private void _captureHeaderValues(params object[] providedParams)
     {
         // Find the parameter named "httpHeaders"
