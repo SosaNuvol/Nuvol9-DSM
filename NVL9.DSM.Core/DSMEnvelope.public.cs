@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using NVL9.DSM.Core.Codes;
 using NVL9.DSM.Core.Models;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 public partial class DSMEnvelope<T>
@@ -27,6 +28,67 @@ public partial class DSMEnvelope<T>
         return result;
     }
 
+    /// <summary>
+    /// Initializes a DSMEnvelope with caller information automatically provided by the compiler.
+    /// This method works reliably with async methods and is the recommended approach.
+    /// </summary>
+    /// <param name="className">The name of the calling class</param>
+    /// <param name="providedParams">Additional parameters for the envelope</param>
+    /// <param name="callerMemberName">Automatically filled by the compiler with the calling method name</param>
+    /// <returns>A new DSMEnvelope instance</returns>
+    public static DSMEnvelope<T> InitWithCaller(
+        string className,
+        object[]? providedParams = null,
+        [CallerMemberName] string callerMemberName = "")
+    {
+        providedParams ??= Array.Empty<object>();
+        
+        _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
+
+        var callerMethod = CallerMethodName.FromCallerWithClass(className, callerMemberName);
+        
+        var result = new DSMEnvelope<T>(showArguments, obfuscatedListOfArguments);
+        var stackTrace = new StackTrace();
+        var frames = stackTrace.GetFrames();
+
+        result.CodeBlockInfo = new CodeBlock(frames[_ONE_DEEP_INTO_STACK], providedParams, callerMethod);
+
+        result.PrintEnvelop();
+
+        return result;
+    }
+
+    /// <summary>
+    /// Initializes a DSMEnvelope with caller information automatically provided by the compiler.
+    /// This method works reliably with async methods and is the recommended approach.
+    /// Class name will be inferred from the source file path.
+    /// </summary>
+    /// <param name="providedParams">Additional parameters for the envelope</param>
+    /// <param name="callerMemberName">Automatically filled by the compiler with the calling method name</param>
+    /// <param name="callerFilePath">Automatically filled by the compiler with the source file path</param>
+    /// <returns>A new DSMEnvelope instance</returns>
+    public static DSMEnvelope<T> InitWithCaller(
+        object[]? providedParams = null,
+        [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "")
+    {
+        providedParams ??= Array.Empty<object>();
+        
+        _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
+
+        var callerMethod = CallerMethodName.FromCaller(callerMemberName, callerFilePath);
+        
+        var result = new DSMEnvelope<T>(showArguments, obfuscatedListOfArguments);
+        var stackTrace = new StackTrace();
+        var frames = stackTrace.GetFrames();
+
+        result.CodeBlockInfo = new CodeBlock(frames[_ONE_DEEP_INTO_STACK], providedParams, callerMethod);
+
+        result.PrintEnvelop();
+
+        return result;
+    }
+
 
     public bool IsSuccessful()
     {
@@ -38,7 +100,7 @@ public partial class DSMEnvelope<T>
         return Code == DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.GEN_COMMON_00001);
     }
 
-    public DSMEnvelope<T> Success(T result, bool outputEnvelop = false)
+    public DSMEnvelope<T> Success(T result, bool outputEnvelop = true)
     {
         _calculateExecutionTime();
         Value = result;
@@ -51,7 +113,7 @@ public partial class DSMEnvelope<T>
         return this;
     }
 
-    public DSMEnvelope<T> Success(bool outputEnvelop = false)
+    public DSMEnvelope<T> Success(bool outputEnvelop = true)
     {
         _calculateExecutionTime();
 
@@ -64,6 +126,14 @@ public partial class DSMEnvelope<T>
         if (outputEnvelop) PrintEnvelop();
 
         return this;
+    }
+
+    /// <summary>
+    /// Implementation of IDSMEnvelope.Success() method
+    /// </summary>
+    void IDSMEnvelope.Success()
+    {
+        Success(outputEnvelop: false);
     }
 
     public void FinishLifeCycle()
@@ -136,12 +206,20 @@ public partial class DSMEnvelope<T>
         DTOMessage = senderEnvelope.DTOMessage;
     }
 
-    internal void SetApiTraceId(string? apiTraceId)
+    public void SetFreezeStatus(IDSMEnvelope envelope)
+    {
+        FreezeStatus = envelope.FreezeStatus;
+        ErrorIEID = envelope.ErrorIEID;
+        Code = envelope.Code;
+        DTOMessage = envelope.DTOMessage;
+    }
+
+    public void SetApiTraceId(string? apiTraceId)
     {
         ApiTraceId = apiTraceId;
     }
 
-    internal void SetIdempotencyKeyId(string? idempotencyKeyId)
+    public void SetIdempotencyKeyId(string? idempotencyKeyId)
     {
         IdempotencyKeyId = idempotencyKeyId;
     }

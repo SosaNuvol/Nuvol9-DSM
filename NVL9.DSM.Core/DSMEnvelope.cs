@@ -4,7 +4,7 @@ using NVL9.DSM.Core.Codes;
 using NVL9.DSM.Core.Models;
 using System.Diagnostics;
 
-public partial class DSMEnvelope<T>
+public partial class DSMEnvelope<T> : IDSMEnvelope
 {
     private const short _MAX_RANDOM_NUMBER = short.MaxValue;
     private const short _MIN_RANDOM_NUMBER = 999;
