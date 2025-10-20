@@ -1,5 +1,6 @@
 ﻿namespace NVL9.DSM.Core;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using NVL9.DSM.Core.Codes;
@@ -39,7 +40,8 @@ public partial class DSMEnvelope<T>
     public static DSMEnvelope<T> InitWithCaller(
         string className,
         object[]? providedParams = null,
-        [CallerMemberName] string callerMemberName = "")
+        [CallerMemberName] string callerMemberName = "",
+        bool printEnvelop = true)
     {
         providedParams ??= Array.Empty<object>();
         
@@ -53,7 +55,7 @@ public partial class DSMEnvelope<T>
 
         result.CodeBlockInfo = new CodeBlock(frames[_ONE_DEEP_INTO_STACK], providedParams, callerMethod);
 
-        result.PrintEnvelop();
+        if (printEnvelop) result.PrintEnvelop();
 
         return result;
     }
@@ -70,7 +72,8 @@ public partial class DSMEnvelope<T>
     public static DSMEnvelope<T> InitWithCaller(
         object[]? providedParams = null,
         [CallerMemberName] string callerMemberName = "",
-        [CallerFilePath] string callerFilePath = "")
+        [CallerFilePath] string callerFilePath = "",
+        bool printEnvelop = true)
     {
         providedParams ??= Array.Empty<object>();
         
@@ -84,9 +87,42 @@ public partial class DSMEnvelope<T>
 
         result.CodeBlockInfo = new CodeBlock(frames[_ONE_DEEP_INTO_STACK], providedParams, callerMethod);
 
-        result.PrintEnvelop();
+        if (printEnvelop) result.PrintEnvelop();
 
         return result;
+    }
+
+    /// <summary>
+    /// Captures the API trace and idempotency headers from the HTTP context and sets them on the specified envelope.
+    /// </summary>
+    /// <param name="envelope">The DSM envelope to set the headers on</param>
+    /// <param name="httpContext">The HTTP context to extract headers from</param>
+    public static void CaptureAndSetHeaders(IDSMEnvelope envelope, HttpContext httpContext, bool printEnvelop = true)
+    {
+        if (envelope == null || httpContext?.Request?.Headers == null) return;
+
+        var apiTraceId = httpContext.Request.Headers.ContainsKey("Api-Trace-Id") 
+            ? httpContext.Request.Headers["Api-Trace-Id"].FirstOrDefault() 
+            : null;
+        var idempotencyKeyId = httpContext.Request.Headers.ContainsKey("Idempotency-Key-Id") 
+            ? httpContext.Request.Headers["Idempotency-Key-Id"].FirstOrDefault() 
+            : null;
+
+        envelope.SetApiTraceId(apiTraceId);
+        envelope.SetIdempotencyKeyId(idempotencyKeyId);
+
+        if (printEnvelop) envelope.PrintEnvelop();
+    }
+
+    /// <summary>
+    /// Captures headers and sets them on this envelope instance.
+    /// </summary>
+    /// <param name="httpContext">The HTTP context to extract headers from</param>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> CaptureAndSetHeaders(HttpContext httpContext, bool printEnvelop = true)
+    {
+        CaptureAndSetHeaders(this, httpContext);
+        return this;
     }
 
 
