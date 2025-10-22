@@ -190,7 +190,7 @@ public partial class DSMEnvelope<T>
         return this;
     }
 
-    public void SetState(DSMEnvelopeCode code, string message)
+    public DSMEnvelope<T> SetState(DSMEnvelopeCode code, string message)
     {
         Code = code;
         DTOMessage = message;
@@ -199,6 +199,16 @@ public partial class DSMEnvelope<T>
         {
             ErrorIEID = UniqueIEID;
         }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Explicit implementation of IDSMEnvelope.SetState() method
+    /// </summary>
+    void IDSMEnvelope.SetState(DSMEnvelopeCode code, string message)
+    {
+        SetState(code, message);
     }
 
     public void CaptureException(Exception ex)
