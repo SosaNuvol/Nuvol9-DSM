@@ -185,7 +185,7 @@ public partial class DSMEnvelope<T>
         envelop.SetParentID(RootEnvelopID);
         ErrorIEID = envelop.ErrorIEID;
 
-        envelop.PrintEnvelop();
+        PrintEnvelop();
 
         return this;
     }
@@ -199,6 +199,8 @@ public partial class DSMEnvelope<T>
         {
             ErrorIEID = UniqueIEID;
         }
+
+        PrintEnvelop();
 
         return this;
     }
