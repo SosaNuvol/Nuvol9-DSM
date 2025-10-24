@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Runtime.CompilerServices;
 
 namespace NVL9.DSM.Core;
 
@@ -104,10 +105,11 @@ public partial class DSMEnvelopeManager
     public DSMEnvelope<T> InitEnvelopeWithCaller<T>(
         string className, 
         HttpContext? httpContext = null,
-        object[]? providedParams = null, 
+        object[]? providedParams = null,
+        [CallerMemberName] string callerMemberName = "",
         bool printEnvelop = true)
     {
-        var envelope = DSMEnvelope<T>.InitWithCaller(className, providedParams, printEnvelop: false);
+        var envelope = DSMEnvelope<T>.InitWithCaller(className, providedParams, callerMemberName, printEnvelop: false);
         
         // Capture headers if HttpContext is provided
         if (httpContext != null)
