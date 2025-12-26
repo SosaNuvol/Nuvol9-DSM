@@ -13,6 +13,8 @@ public class CodeBlock
     public IList<CodeBlockArgument> Arguments { get; private set; } = new List<CodeBlockArgument>();
 
     public bool IsValidArgList { get; private set; }
+    public object FilePath { get; internal set; }
+    public object LineNumber { get; internal set; }
 
     public CodeBlock(StackFrame stackFrame, object[] providedArguments, ICallerMethodName callerMethodName)
     {
@@ -24,6 +26,10 @@ public class CodeBlock
         Method = callerMethodName.Method ?? string.Empty;
 
         ClassName = callerMethodName.ClassName ?? string.Empty;
+
+        FilePath = callerMethodName.FilePath ?? string.Empty;
+
+        LineNumber = callerMethodName.LineNumber;
 
         IsValidArgList = _processArgumentsTry(stackFrame, providedArguments);
 

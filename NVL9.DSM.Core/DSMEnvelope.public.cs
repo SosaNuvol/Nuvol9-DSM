@@ -18,7 +18,7 @@ public partial class DSMEnvelope<T>
         _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
 
         var callerMethod = providedParams
-           .FirstOrDefault(param => param is ICallerMethodName) as ICallerMethodName ?? new CallerMethodName("NotSet", "NotSet");
+           .FirstOrDefault(param => param is ICallerMethodName) as ICallerMethodName ?? new CallerMethodName("NotSet", "NotSet", "NotSet", 0);
 
         var result = new DSMEnvelope<T>(showArguments, obfuscatedListOfArguments);
         var stackTrace = new StackTrace();
@@ -41,13 +41,15 @@ public partial class DSMEnvelope<T>
         string className,
         object[]? providedParams = null,
         [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0,
         bool printEnvelop = true)
     {
         providedParams ??= Array.Empty<object>();
         
         _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
 
-        var callerMethod = CallerMethodName.FromCallerWithClass(className, callerMemberName);
+        var callerMethod = CallerMethodName.FromCallerWithClass(className, callerMemberName, callerFilePath, callerLineNumber);
         
         var result = new DSMEnvelope<T>(showArguments, obfuscatedListOfArguments);
         var stackTrace = new StackTrace();
@@ -73,13 +75,14 @@ public partial class DSMEnvelope<T>
         object[]? providedParams = null,
         [CallerMemberName] string callerMemberName = "",
         [CallerFilePath] string callerFilePath = "",
+        [CallerLineNumber] int callerLineNumber = 0,
         bool printEnvelop = true)
     {
         providedParams ??= Array.Empty<object>();
         
         _initProvidedParams(providedParams, out var showArguments, out var obfuscatedListOfArguments);
 
-        var callerMethod = CallerMethodName.FromCaller(callerMemberName, callerFilePath);
+        var callerMethod = CallerMethodName.FromCaller(callerMemberName, callerFilePath, callerLineNumber);
         
         var result = new DSMEnvelope<T>(showArguments, obfuscatedListOfArguments);
         var stackTrace = new StackTrace();
@@ -288,6 +291,8 @@ public partial class DSMEnvelope<T>
         sb.AppendLine($"||                   Message: {DTOMessage}");
         sb.AppendLine($"||                Class Name: {CodeBlockInfo.ClassName}");
         sb.AppendLine($"||                    Method: {CodeBlockInfo.Method}");
+        sb.AppendLine($"||                 File Path: {CodeBlockInfo.FilePath}");
+        sb.AppendLine($"||               Line Number: {CodeBlockInfo.LineNumber}");
 
         sb.Append($"|| {new string('*', _LINE_LENGTH_OUTPUT)} ||");
 

@@ -8,13 +8,18 @@ public interface ICallerMethodName
     string Method { get; }
 
     string ClassName { get; }
+    string FilePath { get; }
+    int LineNumber { get; }
+
 }
 
 public class CallerMethodName : ICallerMethodName
 {
     public string Method { get; private set; }
     public string ClassName { get; private set; }
-    
+    public string FilePath { get; private set; }
+    public int LineNumber { get; private set; }
+
     public CallerMethodName(StackFrame stackFrame)
     {
         if (stackFrame == null) return;
@@ -46,10 +51,12 @@ public class CallerMethodName : ICallerMethodName
         ClassName = declaringType?.Name;
     }
 
-    public CallerMethodName(string methodName, string className)
+    public CallerMethodName(string methodName, string className, string filePath, int lineNumber)
     {
         Method = methodName;
         ClassName = className;
+        FilePath = filePath;
+        LineNumber = lineNumber;
     }
 
     /// <summary>
@@ -62,11 +69,12 @@ public class CallerMethodName : ICallerMethodName
     /// <returns>A CallerMethodName instance with the caller information</returns>
     public static CallerMethodName FromCaller(
         [CallerMemberName] string memberName = "",
-        [CallerFilePath] string sourceFilePath = "")
+        [CallerFilePath] string sourceFilePath = "",
+        [CallerLineNumber] int lineNumber = 0)
     {
         // Extract class name from the file path as a fallback
         var fileName = System.IO.Path.GetFileNameWithoutExtension(sourceFilePath);
-        return new CallerMethodName(memberName, fileName);
+        return new CallerMethodName(memberName, fileName, sourceFilePath, lineNumber);
     }
 
     /// <summary>
@@ -77,8 +85,10 @@ public class CallerMethodName : ICallerMethodName
     /// <returns>A CallerMethodName instance with the caller information</returns>
     public static CallerMethodName FromCallerWithClass(
         string className,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0)
     {
-        return new CallerMethodName(memberName, className);
+        return new CallerMethodName(memberName, className, filePath, lineNumber);
     }
 }

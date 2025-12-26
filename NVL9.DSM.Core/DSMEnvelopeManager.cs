@@ -107,9 +107,11 @@ public partial class DSMEnvelopeManager
         HttpContext? httpContext = null,
         object[]? providedParams = null,
         [CallerMemberName] string callerMemberName = "",
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
         bool printEnvelop = true)
     {
-        var envelope = DSMEnvelope<T>.InitWithCaller(className, providedParams, callerMemberName, printEnvelop: false);
+        var envelope = DSMEnvelope<T>.InitWithCaller(className, providedParams, callerMemberName, filePath, lineNumber, printEnvelop: false);
         
         // Capture headers if HttpContext is provided
         if (httpContext != null)
