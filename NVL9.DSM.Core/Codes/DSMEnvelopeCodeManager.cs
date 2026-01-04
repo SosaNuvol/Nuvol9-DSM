@@ -23,6 +23,8 @@ public class DSMEnvelopeCodeManager
         // Appliation Validation
         _dict.Add(DSMEnvelopeCodeEnum.API_APPVLD_02000, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_APPVLD_02000, "API-APPVLD-02000", "404", "General application validation error.", null!));
         _dict.Add(DSMEnvelopeCodeEnum.API_APPVLD_02001, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_APPVLD_02001, "API-APPVLD-02001", "404", "Invalid application arguments.", null!));
+        _dict.Add(DSMEnvelopeCodeEnum.API_APPVLD_02010, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_APPVLD_02010, "API-APPVLD-02010", "404", "No records found.", null!));
+        _dict.Add(DSMEnvelopeCodeEnum.API_APPVLD_02011, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_APPVLD_02011, "API-APPVLD-02011", "404", "Entity is missing the requested wallet type.", null!));
 
         // Security
         _dict.Add(DSMEnvelopeCodeEnum.API_COMMON_01000, new DSMEnvelopeCode((int)DSMEnvelopeCodeEnum.API_COMMON_01000, "API-COMMON-01000", "401", "Authentication Failure.", null!));
