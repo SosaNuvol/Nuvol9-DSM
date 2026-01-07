@@ -14,6 +14,7 @@
         API_APPVLD_02001 = 02001,
         API_APPVLD_02010 = 02010,
         API_APPVLD_02011 = 02011,
+        API_APPVLD_02020 = 02020, // Validation errors
 
         // Database
         API_DATABASE_03020 = 03020,

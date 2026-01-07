@@ -54,6 +54,8 @@ public partial class DSMEnvelope<T> : IDSMEnvelope
 
     public CodeBlock CodeBlockInfo { get; private set; } = null!;
 
+    public Dictionary<string, List<string>>? ValidationErrors { get; private set; } = null!;
+
     private Stopwatch _stopWatch = null!;
 
     private int _pid;

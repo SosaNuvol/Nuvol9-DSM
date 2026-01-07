@@ -264,12 +264,12 @@ public partial class DSMEnvelope<T>
         DTOMessage = envelope.DTOMessage;
     }
 
-    public void SetApiTraceId(string? apiTraceId)
+    public void SetApiTraceId(String? apiTraceId)
     {
         ApiTraceId = apiTraceId;
     }
 
-    public void SetIdempotencyKeyId(string? idempotencyKeyId)
+    public void SetIdempotencyKeyId(String? idempotencyKeyId)
     {
         IdempotencyKeyId = idempotencyKeyId;
     }
@@ -289,6 +289,7 @@ public partial class DSMEnvelope<T>
         sb.AppendLine($"||                      Code: {Code}");
         sb.AppendLine($"||              Code Message: {Code.ErrorMessage}");
         sb.AppendLine($"||                   Message: {DTOMessage}");
+        _addValidationErrors(sb);
         sb.AppendLine($"||                Class Name: {CodeBlockInfo.ClassName}");
         sb.AppendLine($"||                    Method: {CodeBlockInfo.Method}");
         sb.AppendLine($"||                 File Path: {CodeBlockInfo.FilePath}");
@@ -313,11 +314,145 @@ public partial class DSMEnvelope<T>
         }
     }
 
+    private void _addValidationErrors(StringBuilder sb)
+    {
+        if (ValidationErrors == null || !ValidationErrors.Any()) return;
+
+        sb.AppendLine($"||         Validation Errors: {GetValidationErrorCount()} error(s) found");
+        foreach (var fieldError in ValidationErrors)
+        {
+            foreach (var error in fieldError.Value)
+            {
+                sb.AppendLine($"||                     - {fieldError.Key}: {error}");
+            }
+        }
+    }
+
     public string ToRawJson()
     {
         return JsonConvert.SerializeObject(this, Formatting.Indented);
     }
 
+    /// <summary>
+    /// Sets validation errors for the envelope and updates the state to validation failed.
+    /// </summary>
+    /// <param name="validationErrors">Dictionary containing field names and their associated error messages</param>
+    /// <param name="outputEnvelop">Whether to print the envelope after setting errors</param>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> SetValidationErrors(Dictionary<string, List<string>> validationErrors, bool outputEnvelop = true)
+    {
+        _calculateExecutionTime();
+        ErrorIEID = UniqueIEID;
+        ValidationErrors = validationErrors ?? new Dictionary<string, List<string>>();
+        Code = DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.API_APPVLD_02020);
+        DTOMessage = Code.ErrorMessage;
+        
+        if (outputEnvelop) PrintEnvelop();
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a validation error for a specific field.
+    /// </summary>
+    /// <param name="fieldName">The name of the field that has validation errors</param>
+    /// <param name="errorMessage">The validation error message</param>
+    /// <param name="outputEnvelop">Whether to print the envelope after adding the error</param>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> AddValidationError(string fieldName, string errorMessage, bool outputEnvelop = false)
+    {
+        ValidationErrors ??= new Dictionary<string, List<string>>();
+        
+        if (!ValidationErrors.ContainsKey(fieldName))
+        {
+            ValidationErrors[fieldName] = new List<string>();
+        }
+        
+        ValidationErrors[fieldName].Add(errorMessage);
+
+        // Update the state to validation failed if we haven't already
+        if (Code.Code != (int)DSMEnvelopeCodeEnum.API_APPVLD_02020)
+        {
+            _calculateExecutionTime();
+            ErrorIEID = UniqueIEID;
+            Code = DSMEnvelopeCodeManager.Manager.Find(DSMEnvelopeCodeEnum.API_APPVLD_02020);
+            DTOMessage = Code.ErrorMessage;
+        }
+        
+        if (outputEnvelop) PrintEnvelop();
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple validation errors for a specific field.
+    /// </summary>
+    /// <param name="fieldName">The name of the field that has validation errors</param>
+    /// <param name="errorMessages">The list of validation error messages</param>
+    /// <param name="outputEnvelop">Whether to print the envelope after adding the errors</param>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> AddValidationErrors(string fieldName, IEnumerable<string> errorMessages, bool outputEnvelop = false)
+    {
+        foreach (var errorMessage in errorMessages)
+        {
+            AddValidationError(fieldName, errorMessage, false);
+        }
+        
+        if (outputEnvelop) PrintEnvelop();
+        return this;
+    }
+
+    /// <summary>
+    /// Checks if the envelope has any validation errors.
+    /// </summary>
+    /// <returns>True if validation errors exist, false otherwise</returns>
+    public bool HasValidationErrors()
+    {
+        return ValidationErrors != null && ValidationErrors.Any();
+    }
+
+    /// <summary>
+    /// Gets the total count of validation errors across all fields.
+    /// </summary>
+    /// <returns>The total number of validation error messages</returns>
+    public int GetValidationErrorCount()
+    {
+        return ValidationErrors?.Values.Sum(errors => errors.Count) ?? 0;
+    }
+
+    /// <summary>
+    /// Clears all validation errors.
+    /// </summary>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> ClearValidationErrors()
+    {
+        ValidationErrors?.Clear();
+        return this;
+    }
+
+    /// <summary>
+    /// Applies validation errors from a ValidationErrorCollector to this envelope.
+    /// </summary>
+    /// <param name="collector">The validation error collector containing the errors</param>
+    /// <param name="outputEnvelop">Whether to print the envelope after applying errors</param>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> ApplyValidationErrors(ValidationErrorCollector collector, bool outputEnvelop = true)
+    {
+        if (collector.HasErrors())
+        {
+            SetValidationErrors(collector.GetErrors(), outputEnvelop);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a failed validation result with the collected errors.
+    /// </summary>
+    /// <param name="collector">The validation error collector containing the errors</param>
+    /// <param name="outputEnvelop">Whether to print the envelope</param>
+    /// <returns>This envelope instance for method chaining</returns>
+    public DSMEnvelope<T> ValidationFailed(ValidationErrorCollector collector, bool outputEnvelop = true)
+    {
+        return ApplyValidationErrors(collector, outputEnvelop);
+    }
 
     public void PrintEnvelop()
     {
