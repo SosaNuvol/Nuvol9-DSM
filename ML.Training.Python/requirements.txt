@@ -1,0 +1,14 @@
+# ML Training Dependencies for DSMEnvelope Performance Prediction
+numpy==1.26.4
+pandas==2.2.0
+scikit-learn==1.4.0
+xgboost==2.0.3
+onnx==1.17.0
+skl2onnx==1.17.0
+onnxruntime==1.17.0
+matplotlib==3.8.2
+seaborn==0.13.1
+joblib==1.3.2
+faker==22.6.0
+azure-cosmos==4.5.1
+python-dotenv==1.0.0
