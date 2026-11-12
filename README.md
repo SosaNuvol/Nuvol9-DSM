@@ -2,6 +2,8 @@
 
 **NVL9.DSM** (Dynamic Stability Models) is a .NET observability library built by **Nuvol 9 Corp**. It wraps every operation result in a structured envelope — `DSMEnvelope<T>` — that carries timing data, caller context, error codes, distributed trace headers, and parent-child relationships. This creates a high-fidelity execution event stream that powers debugging, performance analysis, and AI-driven monitoring.
 
+For a standalone explanation to give Claude or another coding agent integrating DSM into a different project, see the [DSM Integration Guide for Coding Agents](docs/DSM-AGENT-GUIDE.md).
+
 ---
 
 ## Table of Contents
