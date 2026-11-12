@@ -1,5 +1,7 @@
 # 🚀 Quick Start - DSMEnvelope AI Model
 
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity. Duration predictions are statistical estimates from measurements and context, even when a function has deterministic results.
+
 Train a performance prediction model in **5 minutes**.
 
 ---
@@ -289,6 +291,6 @@ ls ML.Training.Python/models/*.json
 
 ---
 
-**You're ready to predict Pure Function execution times!** 🎉
+**You're ready to predict operation execution times!** 🎉
 
 For questions, see [docs/ML-PREDICTION-GUIDE.md](docs/ML-PREDICTION-GUIDE.md).

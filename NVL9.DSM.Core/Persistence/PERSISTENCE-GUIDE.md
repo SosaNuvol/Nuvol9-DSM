@@ -1,5 +1,7 @@
 # DSMEnvelope Analytics & Persistence Guide
 
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity.
+
 ## Overview
 This guide explains how to persist DSMEnvelopes to a database and analyze execution graphs using the built-in analytics engine. The system enables:
 
@@ -12,7 +14,7 @@ This guide explains how to persist DSMEnvelopes to a database and analyze execut
 
 ### Data Flow
 ```
-Pure Function → DSMEnvelope → Persistence Layer → Cosmos DB
+operation → DSMEnvelope → Persistence Layer → Cosmos DB
                      ↓
               Analytics Engine → Insights/Graphs
 ```
@@ -285,7 +287,7 @@ Use this in documentation, dashboards, or debugging tools.
 ## Analytics Capabilities
 
 ### 1. Bottleneck Detection
-Automatically identifies Pure Functions consuming >20% of total execution time:
+Automatically identifies operations consuming >20% of total execution time:
 
 ```csharp
 var bottlenecks = analysis.Bottlenecks;
@@ -332,10 +334,16 @@ var envelopes = await _repository.GetByTimeRangeAsync(
 
 ## Database Schema Design
 
+### Snapshot identity and request grouping
+
+The supplied repository saves a document with `CreateItemAsync`; it does not upsert or append lifecycle events automatically. Its `id` is the envelope's `UniqueIEID` with `|` replaced by `_`. Persist each envelope once at completion. Saving entry and completion for the same envelope in the same partition produces an ID conflict. Multiple durable snapshots would need a separate event identity/storage strategy. See [snapshot semantics](../../README.md#what-does-snapshot-mean).
+
+The graph APIs expect a shared request `RootEnvelopID` and a child's `ParentEnvelopID` equal to the parent's `UniqueIEID`. Currently, initialization generates `RootEnvelopID` per envelope, and the manager sets the parent link to the parent's `RootEnvelopID`. The built-in persistence extension does not normalize these values. A persistence adapter must reconcile both conventions to produce request-wide graphs; see [identifier scope and current linking behavior](../../README.md#identifier-scope-and-current-linking-behavior).
+
 ### Cosmos DB Container Configuration
 
 **Partition Key**: `partitionKey` (maps to `RootEnvelopID`)
-- Ensures all envelopes for a request are in the same logical partition
+- Groups documents with the same key; grouping an entire request requires a shared value as described above
 - Enables efficient single-partition queries for graph traversal
 
 **Indexing Strategy**:
@@ -424,7 +432,7 @@ Console.WriteLine($"Deleted {deletedCount} old envelopes");
 ## Performance Considerations
 
 ### 1. Partition Key Strategy
-- All envelopes for a request share the same `RootEnvelopID` partition
+- For request-wide graph queries, arrange for all documents in the request to share the same `RootEnvelopID` partition; the manager does not currently do this
 - Enables efficient single-partition queries (low RU cost)
 - Supports up to 20GB per logical partition (typically 100K+ envelopes)
 

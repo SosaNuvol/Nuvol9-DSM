@@ -1,8 +1,10 @@
 # DSMEnvelope Performance Prediction - Complete Guide
 
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity. Duration predictions are statistical estimates from measurements and context, even when a function has deterministic results.
+
 ## Overview
 
-This system predicts the execution time of Pure Functions (DSMEnvelopes) using machine learning.
+This system predicts the execution time of operations recorded by DSMEnvelopes using machine learning.
 
 **Components:**
 1. **Python Training App** (`ML.Training.Python/`) - Trains models, exports to ONNX
@@ -237,7 +239,7 @@ Initial performance may be lower (R² ~0.60-0.75), improving as more data is col
 | Feature | Description | Impact |
 |---------|-------------|--------|
 | `className` | Controller/class name | High - different classes have different patterns |
-| `methodName` | Pure Function name | Very High - main predictor |
+| `methodName` | Method name | Very High - main predictor |
 | `depth` | Call stack depth | Medium - deeper = usually slower |
 | `hourOfDay` | Hour (0-23) | Medium - business hours slower |
 | `dayOfWeek` | Day (0-6) | Low - Monday/Friday patterns |

@@ -1,8 +1,10 @@
 # DSMEnvelope AI Model - Complete Implementation
 
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity. Duration predictions are statistical estimates from measurements and context, even when a function has deterministic results.
+
 ## What We Built
 
-A complete **Machine Learning system** for predicting Pure Function execution times using **Python + ONNX + .NET**.
+A complete **Machine Learning system** for predicting operation execution times using **Python + ONNX + .NET**.
 
 ---
 
@@ -95,7 +97,7 @@ Method, Hour,    [12 floats]      Inference      125ms ±20%
 | Feature | Type | Description | Example |
 |---------|------|-------------|---------|
 | `className` | Categorical | Controller name | "PersonController" |
-| `methodName` | Categorical | Pure Function name | "GetById" |
+| `methodName` | Categorical | Method name | "GetById" |
 | `depth` | Numerical | Call stack depth | 0 (controller), 1 (service) |
 | `hourOfDay` | Numerical | Hour (0-23) | 14 (2 PM) |
 | `dayOfWeek` | Numerical | Day (0-6) | 2 (Wednesday) |
@@ -374,4 +376,4 @@ Compare actual vs predicted
 
 **You now have a complete AI-powered performance prediction system!** 🎉
 
-The system can predict Pure Function execution times with 85-95% accuracy, enabling proactive optimization and intelligent request handling.
+The system can predict operation execution times with 85-95% accuracy, enabling proactive optimization and intelligent request handling.

@@ -4,6 +4,9 @@
 DSM (Dynamic Stability Models) in NVL9.DSM.Core is a lightweight envelope system for .NET that wraps every operation result with structured telemetry: timing, error codes, caller context, and trace headers. The output is designed to be logged and analyzed, enabling low-level observability and fast root-cause analysis.
 
 ## What a DSM/DSMEnvelope is
+
+See the [DSM conceptual model](../README.md#functions-results-and-envelopes) for definitions, pure-function terminology, snapshot semantics, and a controller/service example. A function performs the work; the result is its data; the envelope carries that data with execution metadata. Instrumented operations may perform I/O and are not necessarily pure functions.
+
 - A generic wrapper `DSMEnvelope<T>` around data and execution metadata.
 - Each envelope has a unique ID, timestamps, execution time, caller info (class, method, file, line), error state, and optional HTTP trace headers.
 - Envelopes can be nested with parent-child IDs for full request traces.
@@ -15,8 +18,8 @@ DSM (Dynamic Stability Models) in NVL9.DSM.Core is a lightweight envelope system
 4) Optionally “freeze” parent envelopes if an inner operation fails
 
 ## Captured data (key fields)
-- `UniqueIEID`: GUID + process ID
-- `RootEnvelopID`: AppId + host + timestamp + UTC offset + PID
+- `UniqueIEID`: GUID + generated random suffix (not the OS process ID), unique per envelope instance
+- `RootEnvelopID`: AppId + host + timestamp + UTC offset + random suffix, generated per envelope; also used as the persistence partition key
 - `ParentEnvelopID`: links nested operations
 - `StartTime`, `EndTime`, `ExecutionTime` (ms)
 - `Code`: structured status code + message
@@ -32,13 +35,14 @@ DSM (Dynamic Stability Models) in NVL9.DSM.Core is a lightweight envelope system
 
 ## Distributed tracing and hierarchy
 - `DSMEnvelopeManager` provides a stack to track nested envelopes.
-- Parent-child relationships are automatic when using the manager.
+- The manager sets a child's `ParentEnvelopID` to the parent's `RootEnvelopID`. Analytics instead expects the parent's `UniqueIEID` and a shared request `RootEnvelopID`; current manager output requires normalization for request-wide persisted graphs. See [current linking behavior](../README.md#identifier-scope-and-current-linking-behavior).
 - Header values propagate from parent to child for trace continuity.
 - `FreezeStackWith(...)` locks parent envelopes into a failure state after a downstream error.
 
 ## Output formats
 - Console output with color-coded status (init, success, error).
 - JSON serialization via `ToRawJson()` for logging and analytics pipelines.
+- The envelope mutates during execution; serialized output captures its state at emission. The supplied Cosmos repository creates one document per saved envelope. Persist once at completion: saving the same envelope twice in the same partition conflicts rather than keeping a snapshot history.
 
 ## Automation option
 - `DSMEnvelopeAttribute` (PostSharp) can auto-wrap methods at entry/exit to eliminate boilerplate.
@@ -65,7 +69,7 @@ DSM (Dynamic Stability Models) in NVL9.DSM.Core is a lightweight envelope system
 ## Key facts to keep accurate
 - Use `InitWithCaller(...)` for async correctness.
 - Captures headers named `Api-Trace-Id` and `Idempotency-Key-Id`.
-- `RootEnvelopID` includes app id, host, timestamp, UTC offset, PID.
+- `RootEnvelopID` includes app id, host, timestamp, UTC offset, and a random suffix; it is generated separately for each envelope.
 - Validation errors are collected into a field-to-messages dictionary.
 - `ToRawJson()` provides JSON output for logs and pipelines.
 
