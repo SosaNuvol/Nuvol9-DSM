@@ -2,7 +2,7 @@
 
 This is a standalone handoff for an agent integrating DSM into another application. It describes the implementation in this repository, including its limitations. Read the installed package's source or API surface before applying it to another version.
 
-Source context: `feature/AIModels`, reviewed November 12, 2026. The core project declares package `NVL9.DSM.Core` version `1.0.1`, targeting `net9.0`. These are repository declarations, not a claim about the latest published package.
+Source context: `feature/AIModels`, reviewed November 12, 2026. The core project declares package `NVL9.DSM.Core` version `1.0.1`, targeting `net10.0`. These are repository declarations, not a claim about the latest published package.
 
 ## 1. The purpose of DSM
 
@@ -478,7 +478,7 @@ When this guide and another version disagree, inspect these implementation point
 | `NVL9.DSM.Core/Analytics/DSMEnvelopeAnalytics.cs` | Graph linking and analysis algorithms |
 | `NVL9.DSM.Core/DSMEnvelopeAttribute.cs` | PostSharp construction and control-flow effects |
 
-Related project documentation: [main README](../README.md), [analytics guide](../README-ANALYTICS.md), [persistence guide](../NVL9.DSM.Core/Persistence/PERSISTENCE-GUIDE.md), and [ML prediction guide](ML-PREDICTION-GUIDE.md). These links are for this repository; the integration instructions above remain useful when this file is copied alone into another project.
+Related project documentation: [main README](../../README.md), [analytics guide](README-ANALYTICS.md), [persistence guide](../Persistence/PERSISTENCE-GUIDE.md), and [ML prediction guide](ML-PREDICTION-GUIDE.md). These links are for this repository; the integration instructions above remain useful when this file is copied alone into another project.
 
 ## 14. Copyable instruction for Claude
 

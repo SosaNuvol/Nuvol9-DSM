@@ -5,7 +5,7 @@ DSM (Dynamic Stability Models) in NVL9.DSM.Core is a lightweight envelope system
 
 ## What a DSM/DSMEnvelope is
 
-See the [DSM conceptual model](../README.md#functions-results-and-envelopes) for definitions, pure-function terminology, snapshot semantics, and a controller/service example. A function performs the work; the result is its data; the envelope carries that data with execution metadata. Instrumented operations may perform I/O and are not necessarily pure functions.
+See the [DSM conceptual model](../../README.md#functions-results-and-envelopes) for definitions, pure-function terminology, snapshot semantics, and a controller/service example. A function performs the work; the result is its data; the envelope carries that data with execution metadata. Instrumented operations may perform I/O and are not necessarily pure functions.
 
 - A generic wrapper `DSMEnvelope<T>` around data and execution metadata.
 - Each envelope has a unique ID, timestamps, execution time, caller info (class, method, file, line), error state, and optional HTTP trace headers.
@@ -35,7 +35,7 @@ See the [DSM conceptual model](../README.md#functions-results-and-envelopes) for
 
 ## Distributed tracing and hierarchy
 - `DSMEnvelopeManager` provides a stack to track nested envelopes.
-- The manager sets a child's `ParentEnvelopID` to the parent's `RootEnvelopID`. Analytics instead expects the parent's `UniqueIEID` and a shared request `RootEnvelopID`; current manager output requires normalization for request-wide persisted graphs. See [current linking behavior](../README.md#identifier-scope-and-current-linking-behavior).
+- The manager sets a child's `ParentEnvelopID` to the parent's `RootEnvelopID`. Analytics instead expects the parent's `UniqueIEID` and a shared request `RootEnvelopID`; current manager output requires normalization for request-wide persisted graphs. See [current linking behavior](../../README.md#identifier-scope-and-current-linking-behavior).
 - Header values propagate from parent to child for trace continuity.
 - `FreezeStackWith(...)` locks parent envelopes into a failure state after a downstream error.
 

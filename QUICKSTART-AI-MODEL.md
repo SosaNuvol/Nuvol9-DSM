@@ -272,7 +272,7 @@ ls ML.Training.Python/models/*.json
 
 ## 📚 Full Documentation
 
-- **Complete Guide**: [ML-PREDICTION-GUIDE.md](docs/ML-PREDICTION-GUIDE.md)
+- **Complete Guide**: [ML-PREDICTION-GUIDE.md](NVL9.DSM.Core/docs/ML-PREDICTION-GUIDE.md)
 - **AI Model Overview**: [README-AI-MODEL.md](README-AI-MODEL.md)
 - **Training Instructions**: [ML.Training.Python/README.md](ML.Training.Python/README.md)
 
@@ -293,4 +293,4 @@ ls ML.Training.Python/models/*.json
 
 **You're ready to predict operation execution times!** 🎉
 
-For questions, see [docs/ML-PREDICTION-GUIDE.md](docs/ML-PREDICTION-GUIDE.md).
+For questions, see [docs/ML-PREDICTION-GUIDE.md](NVL9.DSM.Core/docs/ML-PREDICTION-GUIDE.md).

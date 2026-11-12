@@ -2,7 +2,7 @@
 
 **NVL9.DSM** (Dynamic Stability Models) is a .NET observability library built by **Nuvol 9 Corp**. It wraps every operation result in a structured envelope — `DSMEnvelope<T>` — that carries timing data, caller context, error codes, distributed trace headers, and parent-child relationships. This creates a high-fidelity execution event stream that powers debugging, performance analysis, and AI-driven monitoring.
 
-For a standalone explanation to give Claude or another coding agent integrating DSM into a different project, see the [DSM Integration Guide for Coding Agents](docs/DSM-AGENT-GUIDE.md).
+For a standalone explanation to give Claude or another coding agent integrating DSM into a different project, see the [DSM Integration Guide for Coding Agents](NVL9.DSM.Core/docs/DSM-AGENT-GUIDE.md).
 
 ---
 
@@ -342,7 +342,7 @@ await envelope.CaptureExceptionAndPersistAsync(ex);
 
 Cosmos DB uses `RootEnvelopID` as the partition key. An entire request chain occupies one partition only if its documents share that value. The built-in producer currently generates it per envelope; see [Identifier scope and current linking behavior](#identifier-scope-and-current-linking-behavior). The repository creates one document per saved envelope, rather than a sequence of entry/exit snapshots.
 
-See [docs/COSMOS-DB-SETUP.md](docs/COSMOS-DB-SETUP.md) and [NVL9.DSM.Core/Persistence/PERSISTENCE-GUIDE.md](NVL9.DSM.Core/Persistence/PERSISTENCE-GUIDE.md) for full setup instructions.
+See [docs/COSMOS-DB-SETUP.md](NVL9.DSM.Core/docs/COSMOS-DB-SETUP.md) and [NVL9.DSM.Core/Persistence/PERSISTENCE-GUIDE.md](NVL9.DSM.Core/Persistence/PERSISTENCE-GUIDE.md) for full setup instructions.
 
 ---
 
@@ -369,7 +369,7 @@ foreach (var b in analysis.Bottlenecks)
 var diagram = analytics.ExportToMermaid(analysis);
 ```
 
-See [README-ANALYTICS.md](README-ANALYTICS.md) and [docs/ANALYTICS-SYSTEM-SUMMARY.md](docs/ANALYTICS-SYSTEM-SUMMARY.md) for details.
+See [README-ANALYTICS.md](NVL9.DSM.Core/docs/README-ANALYTICS.md) and [docs/ANALYTICS-SYSTEM-SUMMARY.md](NVL9.DSM.Core/docs/ANALYTICS-SYSTEM-SUMMARY.md) for details.
 
 ---
 
@@ -399,7 +399,7 @@ if (prediction.IsSlowPrediction)
 
 Model accuracy on synthetic data: R² = 0.88–0.91. On real production data after 1–3 months of training: R² = 0.75–0.95.
 
-See [README-AI-MODEL.md](README-AI-MODEL.md), [QUICKSTART-AI-MODEL.md](QUICKSTART-AI-MODEL.md), and [docs/ML-PREDICTION-GUIDE.md](docs/ML-PREDICTION-GUIDE.md).
+See [README-AI-MODEL.md](README-AI-MODEL.md), [QUICKSTART-AI-MODEL.md](QUICKSTART-AI-MODEL.md), and [docs/ML-PREDICTION-GUIDE.md](NVL9.DSM.Core/docs/ML-PREDICTION-GUIDE.md).
 
 ---
 
@@ -478,6 +478,6 @@ if (validator.HasErrors())
 
 ## NuGet
 
-Package: **NVL9.DSM.Core** — version 1.0.1 — targets **net9.0**
+Package: **NVL9.DSM.Core** — version 1.0.1 — targets **net10.0**
 Author: Andres Sosa / Nuvol 9 Corp
 Repository: https://github.com/SosaNuvol/Nuvol9-DSM

@@ -1,6 +1,6 @@
 # DSMEnvelope Analytics & AI System
 
-For the relationship between functions, results, and envelopes, see the [DSM conceptual model](README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity.
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity.
 
 ## What We Built
 
@@ -212,7 +212,7 @@ graph TD
 
 ### DSMEnvelope as an Operation Snapshot
 
-An envelope is a mutable object during execution. A log record or persisted document captures its state when emitted. With the supplied Cosmos repository, persist once at completion: repeated saves of the same envelope to the same partition conflict because document IDs are reused and saves create items. See [snapshot semantics](README.md#what-does-snapshot-mean).
+An envelope is a mutable object during execution. A log record or persisted document captures its state when emitted. With the supplied Cosmos repository, persist once at completion: repeated saves of the same envelope to the same partition conflict because document IDs are reused and saves create items. See [snapshot semantics](../../README.md#what-does-snapshot-mean).
 
 | Field | Description | Purpose |
 |-------|-------------|---------|
@@ -227,7 +227,7 @@ An envelope is a mutable object during execution. A log record or persisted docu
 
 ### Graph Relationships
 
-The hierarchy below is the intended graph. The current producer and analytics conventions need reconciliation before manager-generated documents form this graph automatically; see [identifier scope and current linking behavior](README.md#identifier-scope-and-current-linking-behavior).
+The hierarchy below is the intended graph. The current producer and analytics conventions need reconciliation before manager-generated documents form this graph automatically; see [identifier scope and current linking behavior](../../README.md#identifier-scope-and-current-linking-behavior).
 
 ```
 Request Flow:

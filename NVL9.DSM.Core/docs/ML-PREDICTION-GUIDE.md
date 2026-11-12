@@ -1,6 +1,6 @@
 # DSMEnvelope Performance Prediction - Complete Guide
 
-For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity. Duration predictions are statistical estimates from measurements and context, even when a function has deterministic results.
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity. Duration predictions are statistical estimates from measurements and context, even when a function has deterministic results.
 
 ## Overview
 
