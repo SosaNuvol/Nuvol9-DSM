@@ -1,5 +1,7 @@
 # DSMEnvelope Analytics System - Implementation Summary
 
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity.
+
 ## What We Built
 
 A complete **observability and analytics system** for DSMEnvelopes that enables:
@@ -104,14 +106,14 @@ A complete **observability and analytics system** for DSMEnvelopes that enables:
 
 ## How It Works
 
-### Pure Function Tracking
+### Operation Tracking
 
-1. **Entry**: Pure Function starts → DSMEnvelope created with Code `GEN_COMMON_00001`
+1. **Entry**: Operation starts → DSMEnvelope created with Code `GEN_COMMON_00001`
 2. **Execution**: Function executes → Timing tracked automatically
 3. **Exit**: Function completes → Code changes to:
    - `GEN_COMMON_00000` (success)
    - Error code (if exception occurred)
-4. **Persistence**: Envelope saved to Cosmos DB with all metadata
+4. **Persistence**: Explicitly save the completed envelope to Cosmos DB. Initialization does not automatically persist it. The supplied repository creates an item with an ID derived from `UniqueIEID`; saving the same envelope again in the same partition conflicts rather than retaining another snapshot. See [snapshot semantics](../../README.md#what-does-snapshot-mean).
 
 ### Parent-Child Relationships
 
@@ -121,7 +123,7 @@ Controller.GetPersonById (Root)
        └─> DatabaseQuery.ExecuteAsync (Child 2, Parent = Child 1)
 ```
 
-Each envelope stores its `ParentEnvelopID`, enabling graph reconstruction.
+This is the intended hierarchy. Analytics matches a child's `ParentEnvelopID` to its parent's `UniqueIEID` and request queries expect a shared `RootEnvelopID`. The manager currently writes the parent's `RootEnvelopID` as the parent link and leaves each child's own `RootEnvelopID` unchanged. Automatic manager output therefore requires normalization before it satisfies those graph conventions. See [identifier scope and current linking behavior](../../README.md#identifier-scope-and-current-linking-behavior).
 
 ### Graph Analysis Process
 
@@ -200,7 +202,7 @@ graph TD
 ### Cosmos DB Schema
 
 **Partition Key**: `/partitionKey` = `RootEnvelopID`
-- All envelopes for a request in same logical partition
+- Request-wide grouping requires documents to share `RootEnvelopID`; current initialization generates it separately for each envelope
 - Efficient single-partition queries (low cost)
 - Supports up to 20GB per partition (100K+ envelopes)
 
@@ -254,7 +256,7 @@ var mermaidCode = analytics.ExportToMermaid(analysis);
 
 ### For Developers
 - **Debugging**: Visualize execution flow and identify slow methods
-- **Profiling**: See exact execution times for each Pure Function
+- **Profiling**: See exact execution times for each operation
 - **Error Tracking**: Trace errors back to source with full context
 
 ### For Operations

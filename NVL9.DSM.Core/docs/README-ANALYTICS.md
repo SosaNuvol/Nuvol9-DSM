@@ -1,13 +1,15 @@
 # DSMEnvelope Analytics & AI System
 
+For the relationship between functions, results, and envelopes, see the [DSM conceptual model](../../README.md#functions-results-and-envelopes). "Pure Function" in earlier material means an instrumented operation; DSM does not require or guarantee function purity.
+
 ## What We Built
 
-Based on your understanding of **DSMEnvelopes as snapshots of Pure Function execution states**, I've built a complete **AI-powered observability and analytics system** that enables you to:
+DSMEnvelopes capture operation results and execution metadata. The **observability and analytics system** uses these records to:
 
 ### 🎯 Core Capabilities
 
 1. **Store Execution Graphs** in Azure Cosmos DB
-   - Each Pure Function execution is persisted as a document
+   - Each instrumented execution is persisted as a document
    - Parent-child relationships are maintained for graph reconstruction
    - Efficient querying with hierarchical partition keys
 
@@ -17,7 +19,7 @@ Based on your understanding of **DSMEnvelopes as snapshots of Pure Function exec
    - Color-coded visualization (green=success, red=error, yellow=initialized)
 
 3. **Identify Bottlenecks**
-   - Automatic detection of slow Pure Functions (>20% of total time)
+   - Automatic detection of slow operations (>20% of total time)
    - Critical path analysis showing the longest execution chain
    - Performance percentiles (P95, P99, median, avg)
 
@@ -27,18 +29,18 @@ Based on your understanding of **DSMEnvelopes as snapshots of Pure Function exec
    - Full request lifecycle monitoring
 
 5. **Analyze Performance**
-   - Aggregated statistics per Pure Function
+   - Aggregated statistics per operation
    - Success rates and error distributions
    - Time-series analysis for trend detection
 
 ## Architecture Overview
 
 ```
-Pure Function Entry → DSMEnvelope Created (GEN_COMMON_00001)
+Operation Entry → DSMEnvelope Created (GEN_COMMON_00001)
          ↓
-Pure Function Executes → Timing tracked automatically
+Operation Executes → Timing tracked automatically
          ↓
-Pure Function Exits → Status Code set:
+Operation Exits → Status Code set:
          ├─> GEN_COMMON_00000 (Success)
          └─> Error Code (e.g., API_APPVLD_02010)
          ↓
@@ -208,19 +210,24 @@ graph TD
 
 ## Understanding the Data Model
 
-### DSMEnvelope as Pure Function Snapshot
+### DSMEnvelope as an Operation Snapshot
+
+An envelope is a mutable object during execution. A log record or persisted document captures its state when emitted. With the supplied Cosmos repository, persist once at completion: repeated saves of the same envelope to the same partition conflict because document IDs are reused and saves create items. See [snapshot semantics](../../README.md#what-does-snapshot-mean).
 
 | Field | Description | Purpose |
 |-------|-------------|---------|
-| **RootEnvelopID** | Unique identifier for the Pure Function | Links all snapshots of the same execution |
-| **ParentEnvelopID** | ID of the calling Pure Function | Builds execution graph hierarchy |
+| **UniqueIEID** | Unique envelope instance ID | Distinguishes individual executions of the same method |
+| **RootEnvelopID** | Per-envelope readable ID; also the persistence partition key | Graph queries expect a shared value across a request, which the manager does not currently propagate |
+| **ParentEnvelopID** | Parent link | Analytics expects the parent's `UniqueIEID`; the manager currently supplies its `RootEnvelopID` |
 | **Code** | Status code (00001=initialized, 00000=success, others=errors) | Determines function outcome |
 | **ExecutionTime** | Duration in milliseconds | Performance analysis |
-| **ClassName, MethodName** | Location in code | Identifies the Pure Function |
+| **ClassName, MethodName** | Location in code | Identifies the method, rather than a particular execution |
 | **FilePath, LineNumber** | Source code location | Developer debugging |
 | **ApiTraceId** | HTTP trace ID | Distributed tracing across services |
 
 ### Graph Relationships
+
+The hierarchy below is the intended graph. The current producer and analytics conventions need reconciliation before manager-generated documents form this graph automatically; see [identifier scope and current linking behavior](../../README.md#identifier-scope-and-current-linking-behavior).
 
 ```
 Request Flow:
@@ -231,14 +238,14 @@ Request Flow:
 
 ## Key Features for AI Analysis
 
-### 1. Predictable Outcomes
-Since Pure Functions have predictable outputs, the system can:
+### 1. Historical Execution Patterns
+Recorded statuses and durations provide a basis for statistical analysis. With representative data and suitable analysis/models, the system can:
 - Detect anomalies in execution times
 - Identify unexpected error patterns
 - Predict performance degradation
 
 ### 2. Complete Traceability
-Every step is recorded:
+Records emitted at entry and completion can show:
 - Where execution entered (Code 00001)
 - How long it took (ExecutionTime)
 - What happened (Code 00000 or error code)
@@ -320,4 +327,4 @@ With this data, you can build AI models for:
 
 **You now have a complete system to "see the internals of an application running" through DSMEnvelope analytics.** 🎉
 
-The system tracks every Pure Function execution, builds execution graphs, identifies bottlenecks, and enables AI-powered analysis of your application's behavior.
+The system tracks every instrumented execution, builds execution graphs, identifies bottlenecks, and enables AI-powered analysis of your application's behavior.
