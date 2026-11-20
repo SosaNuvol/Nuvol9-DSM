@@ -27,7 +27,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="6.1.2" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.1.2" />
-    <PackageReference Include="PostSharp" Version="2025.1.2" />
   </ItemGroup>
 
 </Project>
