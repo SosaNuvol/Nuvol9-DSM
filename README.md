@@ -24,7 +24,6 @@ For a standalone explanation to give Claude or another coding agent integrating 
     - [Identifier scope and current linking behavior](#identifier-scope-and-current-linking-behavior)
     - [Example: a controller calls a service](#example-a-controller-calls-a-service)
   - [Output and Logging](#output-and-logging)
-  - [PostSharp Attribute (Zero-Boilerplate)](#postsharp-attribute-zero-boilerplate)
   - [Persistence to Azure Cosmos DB](#persistence-to-azure-cosmos-db)
     - [Setup (`Program.cs`)](#setup-programcs)
     - [Usage](#usage)
@@ -297,23 +296,6 @@ Call `envelope.ToRawJson()` to get a JSON string suitable for log pipelines, Cos
 
 ---
 
-## PostSharp Attribute (Zero-Boilerplate)
-
-`DSMEnvelopeAttribute` is a PostSharp `OnMethodBoundaryAspect` that instruments methods without any manual envelope code:
-
-```csharp
-[DSMEnvelope(typeof(DSMEnvelope<PersonDto>))]
-public PersonDto GetById(int id)
-{
-    // No envelope code needed — OnEntry/OnSuccess/OnException handle it
-    return _repo.Find(id);
-}
-```
-
-The attribute handles push/pop on the manager stack, header capture (when on a controller), and `FreezeStackWith` on exception.
-
----
-
 ## Persistence to Azure Cosmos DB
 
 The `Persistence/` layer stores envelope documents so the full execution graph of every request is queryable after the fact.
@@ -411,7 +393,6 @@ NVL9.DSM.Core/                  Core library (NuGet package)
   DSMEnvelope.public.cs         Init, Success, CaptureException, header capture
   IDSMEnvelope.cs               Public interface
   DSMEnvelopeManager.cs         Stack manager for nested envelope tracking
-  DSMEnvelopeAttribute.cs       PostSharp aspect for zero-boilerplate instrumentation
   Codes/                        DSMEnvelopeCodeEnum, DSMEnvelopeCode, DSMEnvelopeCodeManager
   Models/                       CallerMethodName, CodeBlock, ValidationErrorCollector
   Persistence/                  IDSMEnvelopeRepository, DSMEnvelopeDocument, CosmosDB impl

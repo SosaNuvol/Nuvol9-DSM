@@ -389,7 +389,6 @@ public async Task<ActionResult<DSMEnvelope<PersonDto>>> CreatePerson(PersonCreat
 <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
 <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 <PackageReference Include="NLog" Version="5.4.0" />
-<PackageReference Include="PostSharp" Version="2025.1.2" />
 ```
 
 ## Key Benefits

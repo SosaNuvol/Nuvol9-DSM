@@ -44,9 +44,6 @@ See the [DSM conceptual model](../../README.md#functions-results-and-envelopes) 
 - JSON serialization via `ToRawJson()` for logging and analytics pipelines.
 - The envelope mutates during execution; serialized output captures its state at emission. The supplied Cosmos repository creates one document per saved envelope. Persist once at completion: saving the same envelope twice in the same partition conflicts rather than keeping a snapshot history.
 
-## Automation option
-- `DSMEnvelopeAttribute` (PostSharp) can auto-wrap methods at entry/exit to eliminate boilerplate.
-
 ## AI/MCP/MLM usage positioning
 - DSM envelopes create a high-fidelity event stream describing low-level execution, timing, error states, and call context.
 - These structured logs can be fed to AI/agent systems or model-based monitoring (MCPs/MLM) to:
@@ -64,7 +61,7 @@ See the [DSM conceptual model](../../README.md#functions-results-and-envelopes) 
 6) AI/MCP/MLM readiness (structured logs for automated analysis)
 7) Use cases (debugging, security, performance, compliance)
 8) Quick-start snippet (init, success, error)
-9) Integration options (ASP.NET header capture, PostSharp attribute)
+9) Integration options (ASP.NET header capture)
 
 ## Key facts to keep accurate
 - Use `InitWithCaller(...)` for async correctness.

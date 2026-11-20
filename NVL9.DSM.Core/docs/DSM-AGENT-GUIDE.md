@@ -427,19 +427,9 @@ Analysis provides error lists, depth, bottlenecks, a computed critical path, and
 
 The companion `NVL9.DSM.ML.Prediction` project and `ML.Training.Python` directory support duration prediction from method identity, call depth, time context, historical averages/deviation/P95, success rate, and popularity. This capability is separate from core DSM integration. It requires model artifacts and compatible feature encoding/order/scaling; envelopes alone do not train or deploy a model. Evaluate with the target application's data rather than treating accuracy claims from examples or synthetic data as guarantees.
 
-## 11. PostSharp instrumentation
+## 11. No method attribute
 
-`DSMEnvelopeAttribute` is an optional method-boundary aspect intended to automate envelope entry/exit handling. Do not assume the attribute is a drop-in replacement for the explicit pattern in this guide.
-
-In this source:
-
-- `OnEntry` uses `Activator.CreateInstance(type, methodArguments)`, while `DSMEnvelope<T>` has private constructors and is normally created through its static factories. Verify compatible construction before relying on the aspect.
-- `OnSuccess` calls the non-generic interface `Success()`; it does not assign the method's return value into `Value`.
-- `OnException` sets `FlowBehavior.Return`, which can suppress the original exception and alter application behavior.
-- The aspect uses the shared manager stack and inherits its concurrency/linking limitations.
-- Build-time PostSharp setup and async method behavior need verification in the target project.
-
-Prefer the explicit pattern until these points are resolved for the actual integration. This guide does not modify the aspect or manager implementation.
+The PostSharp `DSMEnvelopeAttribute` aspect was removed, and the library no longer depends on PostSharp. Use the explicit pattern in this guide for every envelope.
 
 ## 12. Troubleshooting and verification
 
@@ -476,7 +466,6 @@ When this guide and another version disagree, inspect these implementation point
 | `NVL9.DSM.Core/Persistence/DSMEnvelopePersistenceExtensions.cs` | Static repository configuration, completion helpers, and depth calculation |
 | `NVL9.DSM.Core/Persistence/CosmosDB/CosmosDBEnvelopeRepository.cs` | Create-only saves, point reads, queries, and container setup |
 | `NVL9.DSM.Core/Analytics/DSMEnvelopeAnalytics.cs` | Graph linking and analysis algorithms |
-| `NVL9.DSM.Core/DSMEnvelopeAttribute.cs` | PostSharp construction and control-flow effects |
 
 Related project documentation: [main README](../../README.md), [analytics guide](README-ANALYTICS.md), [persistence guide](../Persistence/PERSISTENCE-GUIDE.md), and [ML prediction guide](ML-PREDICTION-GUIDE.md). These links are for this repository; the integration instructions above remain useful when this file is copied alone into another project.
 
